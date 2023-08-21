@@ -23,10 +23,17 @@ const dashboard = async(req,res) =>{
     }
 
     const token = authHeader.split(' ')[1]
-    console.log(token)
 
-    const randomNumber = Math.floor(Math.random() * 100)
-    res.status(200).json({msg:`Hello, Test User`,secret:`Authorized, here is your number: ${randomNumber}`})
+
+    try {
+        const decoded = jwt.verify(token,process.env.JWT_SECRET)
+        const randomNumber = Math.floor(Math.random() * 100)
+        res.status(200).json({msg:`Hello, ${decoded.username}`,secret:`Authorized, here is your number: ${randomNumber}`})
+    } catch (error) {
+        throw new CustomAPIError('Invalid Token',401)
+    }
+
+
 }
 
 module.exports = {login,dashboard}
